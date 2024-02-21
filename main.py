@@ -9,11 +9,15 @@ def RunFunctions():
     print("1: Detecting Colors")
     print("2: Move And Turn")
     print("3: Elevation Detection")
+    print("4: Environment Detection")
+    print("5: Drone Flip")
     strFunctionCheck = str(input("input number or numbers (separated by spaces): "))
     global bolDetect_color
     global bolKey_Listener
     global bolMoveAndTurn
     global bolElevationDetection
+    global bolEnvironmentDetection
+    global bolDroneFlip
     if "1" in strFunctionCheck:
         bolDetect_color = True
     else:
@@ -26,6 +30,14 @@ def RunFunctions():
         bolElevationDetection = True
     else:
         bolElevationDetection = False
+    if "4" in strFunctionCheck:
+        bolEnvironmentDetection = True
+    else:
+        bolEnvironmentDetection = False
+    if "5" in strFunctionCheck:
+        bolDroneFlip = True
+    else:
+        bolDroneFlip = False
 def Detect_color():
     bolDetector = True
     with Listener(on_press=key_listener) as listener:
@@ -46,7 +58,8 @@ def key_listener(key):
     if key == Key.tab:
         drone.land()
         quit()
-
+def Flip():
+    drone.flip()
 def ElevationDetection():
     drone.takeoff()
     battery = drone.get_battery()
@@ -115,6 +128,14 @@ while bolRun:
             threadElevation = multiprocessing.Process(target=ElevationDetection())
             threadElevation.start()
             threadElevation.join()
+        if bolEnvironmentDetection:
+            threadEnviro = multiprocessing.Process(target=EnvironmentDetection())
+            threadEnviro.start()
+            threadEnviro.join()
+        if bolDroneFlip:
+            threadDroneFlip = multiprocessing.Process(target=Flip())
+            threadDroneFlip.start()
+            threadDroneFlip.join()
         listener.join()
 drone.emergency_stop()
 drone.close()
