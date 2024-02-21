@@ -68,7 +68,7 @@ def ElevationDetection():
     intTracker = 1
     initialE = drone.get_pos_z()
     currentE = initialE
-    while int(currentE) <= int(initialE) + 5 and int(currentE) >= int(initialE) - 5:
+    while int(currentE) <= int(initialE) + 10 and int(currentE) >= int(initialE) - 10:
         time.sleep(1)
         currentE = drone.get_pos_z()
         print("Initial Elevation: " + str(int(initialE)))
