@@ -11,6 +11,7 @@ def RunFunctions():
     print("3: Elevation Detection")
     print("4: Environment Detection")
     print("5: Drone Flip")
+    print("6: Set Path")
     strFunctionCheck = str(input("input number or numbers (separated by spaces): "))
     global bolDetect_color
     global bolKey_Listener
@@ -18,6 +19,7 @@ def RunFunctions():
     global bolElevationDetection
     global bolEnvironmentDetection
     global bolDroneFlip
+    global bolSetPath
     if "1" in strFunctionCheck:
         bolDetect_color = True
     else:
@@ -38,6 +40,10 @@ def RunFunctions():
         bolDroneFlip = True
     else:
         bolDroneFlip = False
+    if "6" in strFunctionCheck:
+        bolSetPath = True
+    else:
+        bolSetPath = False
 def Detect_color():
     bolDetector = True
     with Listener(on_press=key_listener) as listener:
@@ -48,6 +54,37 @@ def Detect_color():
             if strColor == "Yellow":
                print("yippee")
 
+def SetPath():
+    bolNotSet = True
+    i = 0
+    listDirection = []
+    listDistance = []
+    listFlip = []
+    while bolNotSet:
+        print("Left " + "\n" + "Right" + "\n" + "Forward" + "\n" + "Backward" + "\n")
+        strDirection = input("Choose Direction: ")
+        intDistance = int(input("Input Distance (cm): "))
+        listDirection[i] = strDirection
+        listDistance[i] = intDistance
+        i = i + 1
+        if str(input("Ready to run? If so input yes: ")) == "true":
+            bolNotSet = False
+        if str(input("Flip?")) == "Yes" or "yes":
+            listFlip[i] = True
+    print("\n" + "Running")
+    j = 0
+    while j <= i:
+        if listDirection[j] == "left" or listDirection[j] == "Left":
+            drone.move_left(listDistance[j])
+        if listDirection[j] == "right" or listDirection[j] == "Right":
+            drone.move_right(listDistance[j])
+        if listDirection[j] == "forward" or listDirection[j] == "Forward":
+            drone.move_forward(listDistance[j])
+        if listDirection[j] == "backward" or listDirection[j] == "Backward":
+            drone.move_backward(listDistance[j])
+        if listFlip[j]:
+            drone.flip()
+        j = j + 1
 
 def key_listener(key):
     if key == Key.space:
@@ -79,9 +116,9 @@ def EnvironmentDetection():
     pressure = drone.get_pressure() # unit: Pascals
     temp = drone.get_temperature()  # unit: Celsius
     battery = drone.get_battery()   # unit: percentage
-    print("Air Pressure: " + pressure + " Pascals  ( " + (pressure / 101325) + " atm )" + "\n"
-          "Temperature: " + temp + " Celsius  ( " + (drone.get_temperature("F")) + " F )" + "\n"
-          "Battery: " + battery + "%")
+    print("Air Pressure: " + str(pressure) + " Pascals  ( " + str(pressure / 101325) + " atm )" + "\n"
+          "Temperature: " + str(temp) + " Celsius  ( " + str(drone.get_temperature("F")) + " F )" + "\n"
+          "Battery: " + str(battery) + "%")
 def MoveAndTurn():
     drone.takeoff()
     battery = drone.get_battery()
@@ -136,6 +173,10 @@ while bolRun:
             threadDroneFlip = multiprocessing.Process(target=Flip())
             threadDroneFlip.start()
             threadDroneFlip.join()
+        if bolSetPath:
+            threadSetPath = multiprocessing.Process(target=SetPath())
+            threadSetPath.start()
+            threadSetPath.join()
         listener.join()
 drone.emergency_stop()
 drone.close()
