@@ -69,6 +69,8 @@ def SetPath():
         i = i + 1
         if str(input("Flip?")) == "Yes" or "yes":
             listFlip.append(True)
+        else:
+            listFlip.append(False)
         if str(input("Ready to run? If so input yes: ")) == "yes":
             bolNotSet = False
     print("\n" + "Running")
