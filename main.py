@@ -64,8 +64,8 @@ def SetPath():
         print("Left " + "\n" + "Right" + "\n" + "Forward" + "\n" + "Backward" + "\n")
         strDirection = input("Choose Direction: ")
         intDistance = int(input("Input Distance (cm): "))
-        listDirection[i] = strDirection
-        listDistance[i] = intDistance
+        listDirection.append(strDirection)
+        listDistance.append(intDistance)
         i = i + 1
         if str(input("Ready to run? If so input yes: ")) == "true":
             bolNotSet = False
@@ -73,6 +73,7 @@ def SetPath():
             listFlip[i] = True
     print("\n" + "Running")
     j = 0
+    drone.takeoff()
     while j <= i:
         if listDirection[j] == "left" or listDirection[j] == "Left":
             drone.move_left(listDistance[j])
@@ -85,6 +86,8 @@ def SetPath():
         if listFlip[j]:
             drone.flip()
         j = j + 1
+    drone.land()
+    drone.close()
 
 def key_listener(key):
     if key == Key.space:
